@@ -6,6 +6,6 @@ services:
     build: .
     image: docker-ubuntu-policyd
     ports:
-      - "8025:8025"
+      - "10031:10031"
     environment:
       - "SUPERVISORD_LOGLEVEL=debug"
