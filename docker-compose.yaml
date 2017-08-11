@@ -1,0 +1,11 @@
+version: '2'
+services:
+  policyd:
+    hostname: policyd
+    container_name: policyd
+    build: .
+    image: docker-ubuntu-policyd
+    ports:
+      - "8025:8025"
+    environment:
+      - "SUPERVISORD_LOGLEVEL=debug"
