@@ -1,0 +1,10 @@
+#!/bin/bash
+set -eo pipefail
+
+#Check cluebringer DB directory is empty before proceeding.
+if [[ $(find /var/lib/mysql/$MYSQL_DATABASE/ -mindepth 1 ! -name db.opt -print -quit | wc -l) -eq 0 ]]; then
+  mysqld_safe  &
+  sleep 5
+  mysql -u$MYSQL_USER -p$MYSQL_PASSWORD $MYSQL_DATABASE < /tmp/policyd-db.mysql
+  mysqladmin -u root -p$MYSQL_ROOT_PASSWORD shutdown
+fi
