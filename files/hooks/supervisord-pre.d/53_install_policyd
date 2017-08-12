@@ -1,8 +1,11 @@
 #!/bin/bash
 set -eo pipefail
-path="/tmp/policyd-cluebringer/cluebringer"
 mysqld_safe  &
 sleep 5
-mysql -u root -p$MYSQL_ROOT_PASSWORD -e "CREATE DATABASE IF NOT EXISTS policyd;"
-mysql -u root -p$MYSQL_ROOT_PASSWORD policyd < $path/database/policyd.mysql
+mysql -u root -p$MYSQL_ROOT_PASSWORD <<-EOSQL
+  CREATE DATABASE IF NOT EXISTS cluebringer;
+  CREATE USER IF NOT EXISTS 'cluebringer'@'localhost' IDENTIFIED BY '$CLUEBRINGER_DB_PASSWORD';
+  GRANT ALL PRIVILEGES ON cluebringer.* TO 'cluebringer'@'localhost'
+EOSQL
+mysql -u root -p$MYSQL_ROOT_PASSWORD cluebringer < /tmp/policyd-db.mysql
 mysqladmin -u root -p$MYSQL_ROOT_PASSWORD shutdown
