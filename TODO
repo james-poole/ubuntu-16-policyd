@@ -1,0 +1,4 @@
+- Complete policyd installation.
+- Build a cluebringer.conf with ability to change settings from environment variables.
+- Ascertain what needs persisting - DB likely to need persistence. Add safety mechanism to ensure we don't overwite destroy persisted data on restart of container.
+- Get into openshift
