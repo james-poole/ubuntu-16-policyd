@@ -1,9 +1,11 @@
-FROM docker.io/1and1internet/ubuntu-16:latest
+FROM docker.io/1and1internet/ubuntu-16-nginx-php-5.6:latest
 ARG DEBIAN_FRONTEND=noninteractive
 COPY files /
 RUN \
   groupadd mysql && \
   useradd -g mysql mysql && \
+  groupadd cbpolicyd && \
+  useradd -g cbpolicyd cbpolicyd && \
   apt-get update && \
   apt-get -o Dpkg::Options::=--force-confdef -y install gettext-base postfix-cluebringer mysql-server mysql-client libconfig-inifiles-perl libcache-fastmmap-perl -y && \
   yes | /usr/bin/perl -MCPAN -e 'install Net::Server' && \
@@ -15,7 +17,8 @@ RUN \
   chmod 0777 /docker-entrypoint-initdb.d && \
   chmod -R 0775 /etc/mysql && \
   chmod -R 0755 /hooks && \
-  chmod -R 0777 /var/log/mysql
+  chmod -R 0777 /var/log/mysql && \
+  ./policyd_install.sh
 ENV MYSQL_ROOT_PASSWORD=ReplaceWithENVFromBuild \
     MYSQL_GENERAL_LOG=0 \
     MYSQL_QUERY_CACHE_TYPE=1 \

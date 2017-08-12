@@ -7,5 +7,8 @@ services:
     image: docker-ubuntu-policyd
     ports:
       - "10031:10031"
+      - "80:8080"
+      - "443:8443"
+    user: "1000000"
     environment:
       - "SUPERVISORD_LOGLEVEL=debug"
