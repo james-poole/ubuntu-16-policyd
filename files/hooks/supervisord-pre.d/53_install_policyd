@@ -1,24 +1,15 @@
 #!/bin/bash
 set -eo pipefail
-
 mkdir -p /tmp/policyd-cluebringer/cluebringer
-
 wget http://download.policyd.org/v2.0.14/cluebringer-v2.0.14.tar.xz -O /tmp/policyd-cluebringer/cluebringer.tar.xz
-
 unxz -c /tmp/policyd-cluebringer/cluebringer.tar.xz | tar xv --strip-components=1 -C /tmp/policyd-cluebringer/cluebringer
-
 for d in /tmp/policyd-cluebringer/cluebringer/database
-  do while read i ;
-    do $d/convert-tsql mysql55 $i
-  done < <(ls -lah $d/*.tsql | awk '{ print $9}') > $d/policyd.mysql
+  do for i in core.tsql access_control.tsql amavis.tsql checkhelo.tsql checkspf.tsql greylisting.tsql quotas.tsql
+    do $d/convert-tsql mysql55 $d/$i
+  done > $d/policyd.mysql
 done
-
 mysqld_safe  &
-
 sleep 5
-
 mysql -u root -p$MYSQL_ROOT_PASSWORD -e "CREATE DATABASE IF NOT EXISTS policyd;"
-
 mysql -u root -p$MYSQL_ROOT_PASSWORD policyd < /tmp/policyd-cluebringer/cluebringer/database/policyd.mysql
-
 mysqladmin -u root -p$MYSQL_ROOT_PASSWORD shutdown
