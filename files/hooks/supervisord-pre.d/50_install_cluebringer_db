@@ -2,9 +2,14 @@
 set -eo pipefail
 
 while [[ $(mysql -h$CLUEBRINGER_DB_HOST -uroot -p$MYSQL_ROOT_PASSWORD -e "select 1" &>/dev/null ; echo $?) -ne 0 ]] ; do
+  echo "Waiting for DB to be ready."
   sleep 5
 done
 
 if [[ $(mysql -N -h$CLUEBRINGER_DB_HOST -uroot -p$MYSQL_ROOT_PASSWORD -e "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = '$MYSQL_DATABASE';") == 0 ]]; then
+  echo "Setting up cluebringer DB."
   mysql -h$CLUEBRINGER_DB_HOST -u$MYSQL_USER -p$MYSQL_PASSWORD $MYSQL_DATABASE < /tmp/policyd-db.mysql
+else
+  echo "Cluebringer DB not empty, exiting."
+  exit 0
 fi
